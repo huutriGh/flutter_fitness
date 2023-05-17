@@ -16,6 +16,8 @@ class _BmiScreenState extends State<BmiScreen> {
   bool isImperial = false;
   late List<bool> isSelected;
   final double fontSize = 18;
+  String heightMessage = '';
+  String weightMessage = '';
 
   String result = '';
 
@@ -27,6 +29,10 @@ class _BmiScreenState extends State<BmiScreen> {
 
   @override
   Widget build(BuildContext context) {
+    heightMessage =
+        'Please insert your height in ${(isMetric) ? 'meter' : 'inches'}';
+    weightMessage =
+        'Please insert your weight in ${(isMetric) ? 'kilos' : 'pounds'}';
     return Scaffold(
         appBar: AppBar(
           title: const Text('BMI Calculator'),
@@ -60,8 +66,7 @@ class _BmiScreenState extends State<BmiScreen> {
               child: TextField(
                 controller: txtHeight,
                 keyboardType: TextInputType.number,
-                decoration:
-                    const InputDecoration(hintText: "Please insert ..."),
+                decoration: InputDecoration(hintText: heightMessage),
               ),
             ),
             Padding(
@@ -69,12 +74,11 @@ class _BmiScreenState extends State<BmiScreen> {
               child: TextField(
                 controller: txtWeight,
                 keyboardType: TextInputType.number,
-                decoration:
-                    const InputDecoration(hintText: "Please insert ..."),
+                decoration: InputDecoration(hintText: weightMessage),
               ),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: findBMi,
               child: Text(
                 'Calculate BMI',
                 style: TextStyle(fontSize: fontSize),
@@ -110,5 +114,9 @@ class _BmiScreenState extends State<BmiScreen> {
     } else {
       bmi = weight * 703 / (height * height);
     }
+
+    setState(() {
+      result = 'Your BMI is ${bmi.toStringAsFixed(2)}';
+    });
   }
 }
