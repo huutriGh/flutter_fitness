@@ -15,6 +15,9 @@ class _BmiScreenState extends State<BmiScreen> {
   bool isMetric = true;
   bool isImperial = false;
   late List<bool> isSelected;
+  final double fontSize = 18;
+
+  String result = '';
 
   @override
   void initState() {
@@ -35,19 +38,19 @@ class _BmiScreenState extends State<BmiScreen> {
             ToggleButtons(
               isSelected: isSelected,
               onPressed: toggleMeasure,
-              children: const [
+              children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     'Metric',
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: fontSize),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     'Imperial',
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: fontSize),
                   ),
                 ),
               ],
@@ -70,6 +73,17 @@ class _BmiScreenState extends State<BmiScreen> {
                     const InputDecoration(hintText: "Please insert ..."),
               ),
             ),
+            ElevatedButton(
+              onPressed: () {},
+              child: Text(
+                'Calculate BMI',
+                style: TextStyle(fontSize: fontSize),
+              ),
+            ),
+            Text(
+              result,
+              style: TextStyle(fontSize: fontSize),
+            ),
           ],
         ));
   }
@@ -85,5 +99,16 @@ class _BmiScreenState extends State<BmiScreen> {
     setState(() {
       isSelected = [isMetric, isImperial];
     });
+  }
+
+  void findBMi() {
+    double bmi = 0;
+    double height = double.tryParse(txtHeight.text) ?? 0;
+    double weight = double.tryParse(txtWeight.text) ?? 0;
+    if (isMetric) {
+      bmi = weight / (height * height);
+    } else {
+      bmi = weight * 703 / (height * height);
+    }
   }
 }
