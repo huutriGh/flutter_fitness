@@ -16,4 +16,10 @@ class SPHelper {
           session.toJson(),
         ));
   }
+
+  List<Session> getSession() {
+    List<Session> sessions = [];
+
+    return sessions;
+  }
 }

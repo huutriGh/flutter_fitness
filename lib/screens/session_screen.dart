@@ -1,3 +1,5 @@
+import 'package:fitness_app/data/sp_helper.dart';
+import 'package:fitness_app/models/session.dart';
 import 'package:flutter/material.dart';
 
 class SessionScreen extends StatefulWidget {
@@ -10,6 +12,13 @@ class SessionScreen extends StatefulWidget {
 class _SessionScreenState extends State<SessionScreen> {
   final TextEditingController txtDescription = TextEditingController();
   final TextEditingController txtDuration = TextEditingController();
+  final SPHelper helper = SPHelper();
+
+  @override
+  void initState() {
+    helper.init().then((_) {});
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +71,7 @@ class _SessionScreenState extends State<SessionScreen> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: saveSession,
               child: const Text(
                 'Save',
               ),
@@ -71,5 +80,22 @@ class _SessionScreenState extends State<SessionScreen> {
         );
       },
     );
+  }
+
+  Future saveSession() async {
+    DateTime now = DateTime.now();
+    String today = '${now.year}-${now.month}-${now.day}';
+    int id = 1;
+    Session newSession = Session(
+      id,
+      today,
+      txtDescription.text,
+      int.tryParse(txtDuration.text) ?? 0,
+    );
+    helper.writeSession(newSession).then((_) {
+      txtDescription.text = '';
+      txtDuration.text = '';
+      Navigator.pop(context);
+    });
   }
 }
