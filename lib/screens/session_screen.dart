@@ -13,11 +13,18 @@ class _SessionScreenState extends State<SessionScreen> {
   final TextEditingController txtDescription = TextEditingController();
   final TextEditingController txtDuration = TextEditingController();
   final SPHelper helper = SPHelper();
-
+  List<Session> sessions = [];
   @override
   void initState() {
-    helper.init().then((_) {});
+    helper.init().then((_) {
+      updateScreen();
+    });
     super.initState();
+  }
+
+  void updateScreen() {
+    sessions = helper.getSession();
+    setState(() {});
   }
 
   @override
@@ -25,6 +32,9 @@ class _SessionScreenState extends State<SessionScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Yours training Sessions'),
+      ),
+      body: ListView(
+        children: getContent(),
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -85,7 +95,7 @@ class _SessionScreenState extends State<SessionScreen> {
   Future saveSession() async {
     DateTime now = DateTime.now();
     String today = '${now.year}-${now.month}-${now.day}';
-    int id = 1;
+    int id = helper.getCounter() + 1;
     Session newSession = Session(
       id,
       today,
@@ -93,9 +103,34 @@ class _SessionScreenState extends State<SessionScreen> {
       int.tryParse(txtDuration.text) ?? 0,
     );
     helper.writeSession(newSession).then((_) {
+      updateScreen();
+      helper.setCounter();
       txtDescription.text = '';
       txtDuration.text = '';
       Navigator.pop(context);
     });
+  }
+
+  List<Widget> getContent() {
+    List<Widget> titles = [];
+    for (var session in sessions) {
+      titles.add(
+        Dismissible(
+          key: UniqueKey(),
+          onDismissed: (direction) {
+            helper.deleteSession(session.id).then(
+                  (value) => updateScreen(),
+                );
+          },
+          child: ListTile(
+            title: Text(session.description),
+            subtitle: Text(
+              '${session.date} - duration: ${session.duration} min',
+            ),
+          ),
+        ),
+      );
+    }
+    return titles;
   }
 }
